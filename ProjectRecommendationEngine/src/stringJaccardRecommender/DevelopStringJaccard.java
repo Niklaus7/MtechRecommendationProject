@@ -1,0 +1,129 @@
+package stringJaccardRecommender;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import itemRecommender.ItemRecommend;
+import itemRecommender.MovieToIDmapper;
+
+/**
+ * Servlet implementation class DevelopStringJaccard
+ */
+@WebServlet("/DevelopStringJaccard")
+public class DevelopStringJaccard extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public DevelopStringJaccard() {
+        super();
+        System.out.println("************************************************");
+        System.out.println("     String Based Servlet Called ....");
+        System.out.println("************************************************");
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.getWriter().append("Served at: ").append(request.getContextPath());
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		String namee = request.getParameter("firstname");
+		String[] tag1 = request.getParameterValues("interestTag");
+		String recordset ="";
+		StringBuilder stt = new StringBuilder();
+		System.out.println("Name : "+namee);
+		stt.append('"');
+		for(String s : tag1){
+			System.out.println(s);
+			stt.append(s+",");
+		}
+		stt.replace(stt.length() - 1, stt.length(), "");
+		stt.append('"');
+		System.out.println(stt);
+		recordset = namee + "," + stt;
+		
+		if(namee.isEmpty() || tag1.length==0)
+	      {
+	    	 // recordset = "All fields are mandatory";
+	    	  System.out.println("All Fields Mandatory");
+
+	      }else
+	      {
+	    	  
+		  	try {
+
+				File file = new File("/home/devdatta/UserList.csv");
+				FileOutputStream fop = new FileOutputStream(file,true);
+
+				// if file doesnt exists, then create it
+				if (!file.exists()) {
+					file.createNewFile();
+				}
+
+				// get the content in bytes
+				byte[] contentInBytes = recordset.getBytes();
+				
+				fop.write(contentInBytes);
+				fop.write(System.getProperty("line.separator").getBytes());
+				fop.flush();
+				fop.close();
+
+				System.out.println("Done");
+				tpimpl tp = new tpimpl();
+				tp.getUserRecommendations("/home/devdatta/MovieDataset.csv", "/home/devdatta/UserList.csv", 1, namee);
+				//tp.giveMeList();
+//				List<String> mylist = new ArrayList<String>(); 
+//					mylist=tp.giveMeList();
+//				PrintWriter out = response.getWriter();
+//		    	  out.println("<html>");
+//		    	  out.println("<title>");
+//		    	  out.println("Domain");
+//		    	  out.println("</title>");
+//		    	  out.println("<h1 style='color:orange' >");
+//		    	  out.println("Movie recommended to watch next...");
+//		    	  out.println("</h1>");
+//		    	  out.println("</head>");
+//		    	  out.println("<hr />");
+//		    	  out.println("<body>");
+//		    	  out.println("<h3 style='color:orange'>");
+//		    	  out.println(mylist.get(1));
+//		    	  out.println("<br>");
+//		    	  out.println(mylist.get(2));
+//		    	  out.println("<br>");
+//		    	  out.println(mylist.get(3));
+//			  	  out.println("</h3>");
+//			  	  out.println("</body>");
+//			  	  out.println("</html>");	
+//		    	 
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
+
+	      }
+		
+		
+	}
+
+}
